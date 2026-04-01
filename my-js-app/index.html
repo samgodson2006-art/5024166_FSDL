@@ -1,13 +1,112 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>my-js-app</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<!DOCTYPE html>
+
+<html lang="en" ng-app="helloApp">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Hello Angular - Activity 1 | Full Stack Lab</title>
+
+
+<!-- AngularJS CDN - Version 1.8.2 (Stable) -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
+
+<!-- Custom CSS -->
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<div class="container" ng-controller="HelloController">
+
+<div class="card">
+
+<h1>🎯 Activity 1: Hello Angular!</h1>
+
+<p class="subtitle">Understanding Modules, Controllers, and Expressions</p>
+
+
+<!-- Interactive Section -->
+
+<div class="interactive-section">
+
+<label for="userName">Enter your name:</label>
+
+<input type="text"
+
+id="userName"
+
+ng-model="userName"
+
+placeholder="Type your name here..."
+
+class="input-field">
+
+
+<!-- Angular Expression showing real-time binding -->
+
+<div class="greeting-box">
+
+<h2>✨ Greeting: <span class="highlight">{{ greetingMessage }}</span></h2>
+
+<h3>👋 Hello, <strong>{{ userName || "Student" }}</strong>!</h3>
+
+</div>
+
+
+<!-- Additional Expression Examples -->
+
+<div class="expression-demo">
+
+<h4>📊 Expression Demo:</h4>
+
+<p>Length of your name: <strong>{{ (userName || "Student").length }}</strong> characters</p>
+
+<p>Uppercase: <strong>{{ (userName || "Student").toUpperCase() }}</strong></p>
+
+<p>Current time: <strong>{{ currentTime }}</strong></p>
+
+</div>
+
+</div>
+
+
+<!-- Learning Objectives -->
+
+<div class="learning-card">
+
+<h4>🎓 What We Learned:</h4>
+
+<ul>
+
+<li>✓ <strong>ng-app</strong> directive - Bootstraps AngularJS application</li>
+
+<li>✓ <strong>ng-controller</strong> - Connects view with JavaScript logic</li>
+
+<li>✓ <strong>ng-model</strong> - Two-way data binding</li>
+
+<li>✓ <strong>{{ expression }}</strong> - Angular expressions for dynamic content</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- Custom JavaScript -->
+
+<script src="js/app.js"></script>
+
+</body>
+
 </html>

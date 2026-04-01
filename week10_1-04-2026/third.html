@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Record Manager</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f9f9f9; color: #333; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1, h2 { color: #2c3e50; }
+        
+        /* Form Styling */
+        .form-panel { background: #f1f8ff; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #cce5ff; }
+        .form-group { margin-bottom: 10px; }
+        label { display: inline-block; width: 100px; font-weight: bold; }
+        input[type="text"], input[type="number"] { padding: 6px; width: 200px; border: 1px solid #ccc; border-radius: 4px; }
+        
+        /* Validation Styling */
+        input.ng-invalid.ng-touched { border-color: #e74c3c; }
+        .error { color: #e74c3c; font-size: 0.85em; margin-left: 10px; }
+        
+        /* Button Styling */
+        button { padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; color: white; }
+        .btn-add { background-color: #2ecc71; }
+        .btn-add:disabled { background-color: #95a5a6; cursor: not-allowed; }
+        .btn-delete { background-color: #e74c3c; padding: 5px 10px; font-size: 0.9em; }
+        .btn-delete:hover { background-color: #c0392b; }
+
+        /* Table Styling */
+        .search-bar { margin-bottom: 15px; width: 100%; padding: 8px; box-sizing: border-box; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #34495e; color: white; }
+        tr:hover { background-color: #f5f5f5; }
+        .empty-state { text-align: center; color: #7f8c8d; padding: 20px; font-style: italic; }
+    </style>
+</head>
+<body ng-app="studentApp" ng-controller="StudentController">
+
+<div class="container">
+    <h1>Student Record Manager</h1>
+
+    <div class="form-panel">
+        <h2>Add New Student</h2>
+        <form name="studentForm" ng-submit="addStudent()" novalidate>
+            
+            <div class="form-group">
+                <label>Roll No:</label>
+                <input type="text" name="rollNo" ng-model="newStudent.rollNo" required>
+                <span class="error" ng-show="studentForm.rollNo.$error.required && studentForm.rollNo.$touched">Roll Number is required.</span>
+            </div>
+
+            <div class="form-group">
+                <label>Name:</label>
+                <input type="text" name="name" ng-model="newStudent.name" required>
+                <span class="error" ng-show="studentForm.name.$error.required && studentForm.name.$touched">Name is required.</span>
+            </div>
+
+            <div class="form-group">
+                <label>Grade:</label>
+                <input type="text" name="grade" ng-model="newStudent.grade" required>
+                <span class="error" ng-show="studentForm.grade.$error.required && studentForm.grade.$touched">Grade is required.</span>
+            </div>
+
+            <button type="submit" class="btn-add" ng-disabled="studentForm.$invalid">Add Student</button>
+        </form>
+    </div>
+
+    <h2>Student Directory</h2>
+    
+    <input type="text" class="search-bar" ng-model="searchText" placeholder="🔍 Search students by name, roll no, or grade...">
+
+    <table>
+        <thead>
+            <tr>
+                <th>Roll No</th>
+                <th>Name</th>
+                <th>Grade</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="student in students | filter:searchText">
+                <td>{{ student.rollNo }}</td>
+                <td>{{ student.name }}</td>
+                <td>{{ student.grade }}</td>
+                <td>
+                    <button class="btn-delete" ng-click="deleteStudent(student)">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="empty-state" ng-show="students.length === 0">
+        No students found. Add a student above to get started.
+    </div>
+
+</div>
+
+<script>
+    const app = angular.module('studentApp', []);
+
+    app.controller('StudentController', function($scope) {
+        
+        // 1. Initial Data: Array of student objects
+        $scope.students = [
+            { rollNo: '101', name: 'Sam Godson', grade: 'A' },
+            { rollNo: '102', name: 'Alison Joseph', grade: 'B' },
+            { rollNo: '103', name: 'Vasanth Nadar', grade: 'A-' }
+        ];
+
+        // Empty object to hold new form data
+        $scope.newStudent = {};
+
+        // 2. Add Student Function
+        $scope.addStudent = function() {
+            if ($scope.studentForm.$valid) {
+                // Push a copy of the newStudent object into the array
+                // We use angular.copy so the array item isn't linked to the form inputs anymore
+                $scope.students.push(angular.copy($scope.newStudent));
+                
+                // Clear the form fields
+                $scope.newStudent = {};
+                
+                // Reset form validation state to hide red borders
+                $scope.studentForm.$setPristine();
+                $scope.studentForm.$setUntouched();
+            }
+        };
+
+        // 3. Delete Student Function
+        $scope.deleteStudent = function(studentToDelete) {
+            // Find the index of the student in the array
+            const index = $scope.students.indexOf(studentToDelete);
+            
+            // Remove 1 item at that index
+            if (index !== -1) {
+                $scope.students.splice(index, 1);
+            }
+        };
+    });
+</script>
+
+</body>
+</html>

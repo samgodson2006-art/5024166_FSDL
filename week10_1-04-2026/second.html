@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AngularJS Events & Validation</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; max-width: 400px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 8px; box-sizing: border-box; }
+        
+        /* AngularJS automatically applies these classes based on validation state */
+        input.ng-invalid.ng-touched { border: 2px solid #e74c3c; } /* Red border for errors */
+        input.ng-valid.ng-touched { border: 2px solid #2ecc71; }   /* Green border for valid */
+        
+        .error-text { color: #e74c3c; font-size: 14px; margin-top: 5px; display: block; }
+        .success-box { padding: 15px; background-color: #d4edda; color: #155724; border-radius: 4px; }
+        button { padding: 10px 15px; cursor: pointer; }
+        button:disabled { background-color: #cccccc; cursor: not-allowed; }
+    </style>
+</head>
+
+<body ng-app="orderApp" ng-controller="OrderController">
+
+    <h2>Place an Order</h2>
+
+    <form name="orderForm" ng-submit="placeOrder()" novalidate>
+
+        <div class="form-group">
+            <label>Customer Name:</label>
+            <input type="text" name="customerName" ng-model="order.name" required>
+            
+            <span class="error-text" ng-show="orderForm.customerName.$error.required && orderForm.customerName.$touched">
+                Name is required.
+            </span>
+        </div>
+
+        <div class="form-group">
+            <label>Email Address:</label>
+            <input type="email" name="customerEmail" ng-model="order.email" required>
+            
+            <span class="error-text" ng-show="orderForm.customerEmail.$error.required && orderForm.customerEmail.$touched">
+                Email is required.
+            </span>
+            <span class="error-text" ng-show="orderForm.customerEmail.$error.email && orderForm.customerEmail.$touched">
+                Please enter a valid email format.
+            </span>
+        </div>
+
+        <div class="form-group">
+            <label>Special Instructions (Optional):</label>
+            <input type="text" name="instructions" ng-model="order.notes" ng-minlength="10">
+            
+            <span class="error-text" ng-show="orderForm.instructions.$error.minlength && orderForm.instructions.$touched">
+                Instructions must be at least 10 characters if provided.
+            </span>
+        </div>
+
+        <button type="submit" ng-disabled="orderForm.$invalid">Submit Order</button>
+        
+        <button type="button" ng-click="resetForm()">Clear Form</button>
+
+    </form>
+
+    <div class="success-box" ng-show="orderSuccess">
+        <strong>Success!</strong> Order placed for {{ order.name }}.
+    </div>
+
+    <script>
+        const app = angular.module('orderApp', []);
+
+        app.controller('OrderController', function($scope) {
+            // Initialize an empty object for the form data
+            $scope.order = {};
+            $scope.orderSuccess = false;
+
+            // Triggered by ng-submit
+            $scope.placeOrder = function() {
+                if ($scope.orderForm.$valid) {
+                    // In a real app, you would send $scope.order to a server here
+                    console.log("Order Data:", $scope.order);
+                    $scope.orderSuccess = true;
+                }
+            };
+
+            // Triggered by ng-click
+            $scope.resetForm = function() {
+                $scope.order = {};           // Clear the data
+                $scope.orderSuccess = false; // Hide success message
+                
+                // Reset the form's internal validation state (clears the red borders)
+                $scope.orderForm.$setPristine();
+                $scope.orderForm.$setUntouched();
+            };
+        });
+    </script>
+
+</body>
+</html>

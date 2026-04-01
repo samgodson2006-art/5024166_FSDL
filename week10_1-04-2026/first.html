@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AngularJS Hello World</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        input { padding: 5px; font-size: 16px; }
+        .output { color: #0056b3; }
+    </style>
+</head>
+
+<body ng-app="helloWorldApp">
+
+    <div ng-controller="MainController">
+        <h2>AngularJS Hello World App</h2>
+
+        <label for="nameInput">Enter your name: </label>
+        <input type="text" id="nameInput" ng-model="userName" placeholder="Type here...">
+
+        <h3 class="output">Hello, {{ userName }}!</h3>
+        
+        <p>If you delete the name above, the greeting will update instantly.</p>
+    </div>
+
+    <script>
+        // 6. Initialize the AngularJS module
+        const app = angular.module('helloWorldApp', []);
+
+        // 7. Define the controller and pass in the $scope object
+        app.controller('MainController', function($scope) {
+            // Initialize the ng-model variable with a default value
+            $scope.userName = 'World';
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AngularJS Task Tracker</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f7f6; color: #333; margin: 30px; }
+        .app-container { max-width: 600px; margin: 0 auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        .section { margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+        .section:last-child { border-bottom: none; }
+        
+        input[type="text"], select { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 5px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        
+        /* Validation Styles (Concept 2) */
+        input.ng-invalid.ng-touched, select.ng-invalid.ng-touched { border: 2px solid #e74c3c; }
+        .error-msg { color: #e74c3c; font-size: 12px; display: block; margin-bottom: 10px; }
+        
+        button { background: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        button:disabled { background: #bdc3c7; cursor: not-allowed; }
+        button.btn-complete { background: #2ecc71; padding: 5px 10px; font-size: 12px; float: right; }
+
+        .task-card { background: #f9f9f9; padding: 15px; border-left: 5px solid #3498db; margin-bottom: 10px; border-radius: 4px; }
+        .task-card.high-priority { border-left-color: #e74c3c; }
+        
+        /* Live Preview Styles (Concept 1) */
+        .live-preview { background: #e8f4f8; padding: 10px; border-radius: 4px; font-style: italic; font-size: 14px; color: #555; }
+    </style>
+</head>
+<body ng-app="taskApp" ng-controller="TaskController">
+
+    <div class="app-container">
+        <h2>Task Tracker</h2>
+
+        <div class="section">
+            <h3>Add a New Task</h3>
+            <form name="taskForm" ng-submit="addTask()" novalidate>
+                
+                <label>Task Name:</label>
+                <input type="text" name="taskName" ng-model="newTask.name" required placeholder="e.g., Buy groceries">
+                <span class="error-msg" ng-show="taskForm.taskName.$error.required && taskForm.taskName.$touched">
+                    Task name is required.
+                </span>
+
+                <label>Priority:</label>
+                <select name="taskPriority" ng-model="newTask.priority" required>
+                    <option value="">-- Select Priority --</option>
+                    <option value="Normal">Normal</option>
+                    <option value="High">High</option>
+                </select>
+                <span class="error-msg" ng-show="taskForm.taskPriority.$error.required && taskForm.taskPriority.$touched">
+                    Please select a priority level.
+                </span>
+
+                <div class="live-preview" ng-show="newTask.name">
+                    <strong>Live Preview:</strong> You are about to add a {{ newTask.priority || 'Normal' }} priority task called "{{ newTask.name }}".
+                </div>
+
+                <br>
+                <button type="submit" ng-disabled="taskForm.$invalid">Add Task</button>
+            </form>
+        </div>
+
+        <div class="section">
+            <h3>Your Tasks</h3>
+            
+            <input type="text" ng-model="searchTask" placeholder="🔍 Search tasks...">
+
+            <div class="task-card" 
+                 ng-repeat="task in tasks | filter:searchTask"
+                 ng-class="{'high-priority': task.priority === 'High'}">
+                
+                <strong>{{ task.name }}</strong> 
+                <span style="color: #7f8c8d; font-size: 12px;">({{ task.priority }} Priority)</span>
+                
+                <button class="btn-complete" ng-click="completeTask(task)">Mark Complete</button>
+            </div>
+
+            <p ng-show="tasks.length === 0" style="text-align: center; color: #999;">
+                All caught up! No tasks remaining.
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+        // Initialize the App
+        const app = angular.module('taskApp', []);
+
+        // Define the Controller
+        app.controller('TaskController', function($scope) {
+            
+            // 1. Initial State
+            $scope.tasks = [
+                { name: 'Learn AngularJS Directives', priority: 'High' },
+                { name: 'Walk the dog', priority: 'Normal' }
+            ];
+            $scope.newTask = {}; // Holds form data
+
+            // 2. Add Task Function (Triggered by ng-submit)
+            $scope.addTask = function() {
+                if ($scope.taskForm.$valid) {
+                    // Push a copy of the new task to the array
+                    $scope.tasks.push(angular.copy($scope.newTask));
+                    
+                    // Reset the form data and validation state
+                    $scope.newTask = {};
+                    $scope.taskForm.$setPristine();
+                    $scope.taskForm.$setUntouched();
+                }
+            };
+
+            // 3. Complete/Delete Task Function (Triggered by ng-click)
+            $scope.completeTask = function(taskToRemove) {
+                const index = $scope.tasks.indexOf(taskToRemove);
+                if (index !== -1) {
+                    $scope.tasks.splice(index, 1);
+                }
+            };
+        });
+    </script>
+
+</body>
+</html>
